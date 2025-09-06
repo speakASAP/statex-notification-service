@@ -1,10 +1,10 @@
 # StateX Notification Service
 
-A dedicated microservice for handling notifications across multiple channels (Email, WhatsApp, Telegram, LinkedIn) for the StateX platform.
+A dedicated microservice for handling notifications across multiple channels (Email, WhatsApp, Telegram) for the StateX platform.
 
 ## 🚀 Features
 
-- **Multi-Channel Support**: Email, WhatsApp, Telegram, LinkedIn
+- **Multi-Channel Support**: Email, WhatsApp, Telegram
 - **Professional Templates**: Beautiful HTML email templates
 - **Scalable Architecture**: Built with FastAPI and Docker
 - **Real-time Notifications**: Instant delivery across all channels
@@ -18,7 +18,6 @@ A dedicated microservice for handling notifications across multiple channels (Em
 | 📧 Email (SMTP) | ✅ Ready | SMTP credentials |
 | 📱 WhatsApp | ✅ Ready | WhatsApp Business API |
 | ✈️ Telegram | ✅ Ready | Telegram Bot API |
-| 💼 LinkedIn | ✅ Ready | LinkedIn API |
 
 ## 🏗️ Architecture
 
@@ -30,8 +29,7 @@ A dedicated microservice for handling notifications across multiple channels (Em
 │ - User Portal   │    │ - Email SMTP     │    │ - Gmail/Outlook │
 │ - Form Service  │    │ - WhatsApp API   │    │ - WhatsApp      │
 │ - AI Service    │    │ - Telegram API   │    │ - Telegram      │
-└─────────────────┘    │ - LinkedIn API   │    │ - LinkedIn      │
-                       └──────────────────┘    └─────────────────┘
+└─────────────────┘                           └──────────────────┘    └─────────────────┘
 ```
 
 ## 🚀 Quick Start
@@ -125,7 +123,6 @@ GET /api/notifications/stats
 | `TELEGRAM_CHAT_ID` | Telegram chat ID | Yes (for Telegram) |
 | `WHATSAPP_ACCESS_TOKEN` | WhatsApp access token | Yes (for WhatsApp) |
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp phone number ID | Yes (for WhatsApp) |
-| `LINKEDIN_ACCESS_TOKEN` | LinkedIn access token | Yes (for LinkedIn) |
 
 ## 🧪 Testing
 

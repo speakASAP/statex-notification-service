@@ -75,7 +75,6 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL", "contact@statex.cz")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
 WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "")
-LINKEDIN_ACCESS_TOKEN = os.getenv("LINKEDIN_ACCESS_TOKEN", "")
 
 # In-memory storage for demo purposes
 notifications_db = {}
@@ -119,7 +118,9 @@ async def send_notification(notification: NotificationRequest):
         elif notification.contact_type == "telegram":
             success, channel_message = await send_telegram_notification(notification)
         elif notification.contact_type == "linkedin":
-            success, channel_message = await send_linkedin_notification(notification)
+            # LinkedIn profiles are collected for manual sales contact only
+            success = True
+            channel_message = f"LinkedIn profile {notification.contact_value} collected for manual sales contact"
         else:
             channel_message = f"Unsupported contact type: {notification.contact_type}"
         
@@ -212,17 +213,24 @@ async def send_whatsapp_notification(notification: NotificationRequest) -> tuple
         if not WHATSAPP_ACCESS_TOKEN or not WHATSAPP_PHONE_NUMBER_ID:
             return False, "WhatsApp credentials not configured"
         
-        url = f"https://graph.facebook.com/v17.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
+        url = f"https://graph.facebook.com/v22.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
         
         headers = {
             "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
             "Content-Type": "application/json"
         }
         
-        # Format phone number (remove any non-digits and add country code if needed)
-        phone_number = notification.contact_value.replace("+", "").replace(" ", "").replace("-", "")
-        if not phone_number.startswith("420"):  # Add Czech country code if not present
-            phone_number = "420" + phone_number.lstrip("0")
+        # Format phone number (remove any non-digits, keep only digits)
+        phone_number = ''.join(filter(str.isdigit, notification.contact_value))
+        
+        # Ensure phone number starts with country code (remove leading zeros)
+        if phone_number.startswith('0'):
+            phone_number = phone_number[1:]
+        
+        # Add country code if not present (assuming international format)
+        if not phone_number.startswith(('1', '2', '3', '4', '5', '6', '7', '8', '9')):
+            # If no country code, assume it needs one - this should be handled by the user input
+            pass
         
         data = {
             "messaging_product": "whatsapp",
@@ -285,20 +293,6 @@ The Statex Team"""
     except Exception as e:
         return False, f"Failed to send Telegram message: {str(e)}"
 
-async def send_linkedin_notification(notification: NotificationRequest) -> tuple[bool, str]:
-    """Send LinkedIn notification via LinkedIn API"""
-    try:
-        if not LINKEDIN_ACCESS_TOKEN:
-            return False, "LinkedIn access token not configured"
-        
-        # LinkedIn messaging requires the user to be connected
-        # For demo purposes, we'll simulate a successful send
-        # In production, you'd need to implement proper LinkedIn messaging
-        
-        return True, f"LinkedIn message sent successfully to {notification.contact_value} (simulated)"
-        
-    except Exception as e:
-        return False, f"Failed to send LinkedIn message: {str(e)}"
 
 @app.get("/api/notifications")
 async def get_notifications():

@@ -57,7 +57,6 @@ def main():
     email = input("\n📧 Email address: ").strip()
     whatsapp = input("📱 WhatsApp number (with country code, e.g., +420123456789): ").strip()
     telegram_chat_id = input("✈️ Telegram Chat ID: ").strip()
-    linkedin = input("💼 LinkedIn profile URL or username: ").strip()
     
     user_name = input("\n👤 Your name (for personalization): ").strip() or "Test User"
     
@@ -97,16 +96,6 @@ def main():
     else:
         print("\n✈️ Skipping Telegram test (no chat ID provided)")
     
-    # Test LinkedIn
-    if linkedin:
-        print(f"\n💼 Testing LinkedIn to {linkedin}...")
-        result = test_notification("linkedin", linkedin, user_name)
-        if result.get("success"):
-            print(f"✅ LinkedIn sent successfully! Notification ID: {result.get('notification_id')}")
-        else:
-            print(f"❌ LinkedIn failed: {result.get('error', result.get('message'))}")
-    else:
-        print("\n💼 Skipping LinkedIn test (no profile provided)")
     
     print("\n" + "=" * 50)
     print("🎉 Test completed!")
@@ -114,7 +103,6 @@ def main():
     print("- SMTP_USERNAME and SMTP_PASSWORD for email")
     print("- TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID for Telegram")
     print("- WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID for WhatsApp")
-    print("- LINKEDIN_ACCESS_TOKEN for LinkedIn")
 
 if __name__ == "__main__":
     main()
