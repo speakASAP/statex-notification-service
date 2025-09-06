@@ -50,15 +50,29 @@ def main():
     print("🚀 StateX Notification Service Test")
     print("=" * 50)
     
-    # Get user input for test credentials
-    print("\nPlease provide your test credentials:")
-    print("(Leave empty to skip that channel)")
+    # Default test credentials
+    DEFAULT_EMAIL = "ssfskype@gmail.com"
+    DEFAULT_WHATSAPP = "+420774287541"
+    DEFAULT_TELEGRAM_CHAT_ID = "694579866"
+    DEFAULT_USER_NAME = "Sergej"
     
-    email = input("\n📧 Email address: ").strip()
-    whatsapp = input("📱 WhatsApp number (with country code, e.g., +420123456789): ").strip()
-    telegram_chat_id = input("✈️ Telegram Chat ID: ").strip()
-    
-    user_name = input("\n👤 Your name (for personalization): ").strip() or "Test User"
+    # Check if user wants to use defaults (no input)
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--default":
+        print("\n🚀 Using default test credentials...")
+        email = DEFAULT_EMAIL
+        whatsapp = DEFAULT_WHATSAPP
+        telegram_chat_id = DEFAULT_TELEGRAM_CHAT_ID
+        user_name = DEFAULT_USER_NAME
+    else:
+        print("\nPlease provide your test credentials:")
+        print("(Press Enter to use default values)")
+        
+        email = input(f"\n📧 Email address [{DEFAULT_EMAIL}]: ").strip() or DEFAULT_EMAIL
+        whatsapp = input(f"📱 WhatsApp number [{DEFAULT_WHATSAPP}]: ").strip() or DEFAULT_WHATSAPP
+        telegram_chat_id = input(f"✈️ Telegram Chat ID [{DEFAULT_TELEGRAM_CHAT_ID}]: ").strip() or DEFAULT_TELEGRAM_CHAT_ID
+        
+        user_name = input(f"\n👤 Your name [{DEFAULT_USER_NAME}]: ").strip() or DEFAULT_USER_NAME
     
     print(f"\n🧪 Testing notifications for {user_name}...")
     print("=" * 50)

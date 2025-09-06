@@ -257,12 +257,11 @@ async def send_telegram_notification(notification: NotificationRequest) -> tuple
         if not TELEGRAM_BOT_TOKEN:
             return False, "Telegram bot token not configured"
         
-        # For demo purposes, we'll send to a specific chat ID
-        # In production, you'd need to collect user's Telegram chat ID during registration
-        chat_id = os.getenv("TELEGRAM_CHAT_ID", "YOUR_TELEGRAM_CHAT_ID")
+        # Use the chat ID from the notification request
+        chat_id = notification.contact_value
         
-        if chat_id == "YOUR_TELEGRAM_CHAT_ID":
-            return False, "Telegram chat ID not configured"
+        if not chat_id:
+            return False, "Telegram chat ID not provided"
         
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
         
