@@ -26,7 +26,7 @@ A dedicated microservice for handling notifications across multiple channels (Em
 │   StateX        │    │   Notification   │    │   External      │
 │   Platform      │───▶│   Service        │───▶│   APIs          │
 │                 │    │                  │    │                 │
-│ - User Portal   │    │ - Email SMTP     │    │ - Gmail/Outlook │
+│ - User Portal   │    │ - Email SMTP     │    │ - StateX Mailserver │
 │ - Form Service  │    │ - WhatsApp API   │    │ - WhatsApp      │
 │ - AI Service    │    │ - Telegram API   │    │ - Telegram      │
 └─────────────────┘                           └──────────────────┘    └─────────────────┘
@@ -115,10 +115,11 @@ GET /api/notifications/stats
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `SMTP_SERVER` | SMTP server hostname | Yes (for email) |
-| `SMTP_PORT` | SMTP server port | Yes (for email) |
-| `SMTP_USERNAME` | SMTP username | Yes (for email) |
-| `SMTP_PASSWORD` | SMTP password | Yes (for email) |
+| `SMTP_SERVER` | StateX mailserver hostname | Yes (for email) |
+| `SMTP_PORT` | StateX mailserver port | Yes (for email) |
+| `SMTP_USERNAME` | StateX email username | Yes (for email) |
+| `SMTP_PASSWORD` | StateX email password | Yes (for email) |
+| `SENDER_EMAIL` | From email address | Yes (for email) |
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token | Yes (for Telegram) |
 | `TELEGRAM_CHAT_ID` | Telegram chat ID | Yes (for Telegram) |
 | `WHATSAPP_ACCESS_TOKEN` | WhatsApp access token | Yes (for WhatsApp) |
