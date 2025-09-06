@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Simple Mail Server (MailHog for testing)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: statex-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - statex-email-network
+
+  # Notification Service (Updated for MailHog)
+  notification-service:
+    build: .
+    ports:
+      - "8005:8005"
+    environment:
+      - SMTP_SERVER=mailhog
+      - SMTP_PORT=1025
+      - SMTP_USERNAME=
+      - SMTP_PASSWORD=
+      - SENDER_EMAIL=contact@statex.cz
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - LINKEDIN_ACCESS_TOKEN=${LINKEDIN_ACCESS_TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - mailhog
+    restart: unless-stopped
+    networks:
+      - statex-email-network
+
+networks:
+  statex-email-network:
+    driver: bridge

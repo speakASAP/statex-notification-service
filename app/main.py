@@ -70,6 +70,7 @@ SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+SENDER_EMAIL = os.getenv("SENDER_EMAIL", "contact@statex.cz")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
@@ -147,12 +148,20 @@ async def send_notification(notification: NotificationRequest):
 async def send_email_notification(notification: NotificationRequest) -> tuple[bool, str]:
     """Send email notification via SMTP"""
     try:
-        if not SMTP_USERNAME or not SMTP_PASSWORD:
-            return False, "SMTP credentials not configured"
+        # For MailHog (testing), we don't need credentials
+        if SMTP_SERVER == "mailhog" or not SMTP_USERNAME or not SMTP_PASSWORD:
+            # Use MailHog for testing (no credentials needed)
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            # No authentication needed for MailHog
+        else:
+            # Use real SMTP with credentials
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
         
         # Create message
         msg = MIMEMultipart()
-        msg['From'] = SMTP_USERNAME
+        msg['From'] = SENDER_EMAIL or "contact@statex.cz"
         msg['To'] = notification.contact_value
         msg['Subject'] = notification.title
         
@@ -188,11 +197,8 @@ async def send_email_notification(notification: NotificationRequest) -> tuple[bo
         msg.attach(MIMEText(html_body, 'html'))
         
         # Send email
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
         text = msg.as_string()
-        server.sendmail(SMTP_USERNAME, notification.contact_value, text)
+        server.sendmail(SENDER_EMAIL or "contact@statex.cz", notification.contact_value, text)
         server.quit()
         
         return True, f"Email sent successfully to {notification.contact_value}"

@@ -1,0 +1,11 @@
+# StateX Email Aliases
+# Format: email@statex.cz    forward_to@gmail.com
+
+contact@statex.cz    ssfskype@gmail.com
+admin@statex.cz      ssfskype@gmail.com
+sales@statex.cz      ssfskype@gmail.com
+sergej@statex.cz     ssfskype@gmail.com
+support@statex.cz    ssfskype@gmail.com
+
+# Catch-all for any other @statex.cz emails
+@statex.cz           ssfskype@gmail.com

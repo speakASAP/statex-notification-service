@@ -1,0 +1,93 @@
+services:
+  # Complete Email Server (Postfix + Dovecot + Webmail)
+  email-server:
+    image: catatnight/postfix:latest
+    container_name: statex-email-server
+    ports:
+      - "25:25"    # SMTP
+      - "587:587"  # SMTP Submission
+      - "465:465"  # SMTPS
+      - "110:110"  # POP3
+      - "143:143"  # IMAP
+      - "993:993"  # IMAPS
+      - "995:995"  # POP3S
+    environment:
+      - maildomain=statex.cz
+      - smtp_user=contact:contact123
+      - smtp_user=admin:admin123
+      - smtp_user=sales:sales123
+      - smtp_user=sergej:sergej123
+      - smtp_user=support:support123
+    volumes:
+      - ./email-config:/etc/postfix
+      - ./email-data:/var/mail
+      - ./email-ssl:/etc/ssl/certs
+      - ./email-aliases:/etc/aliases
+    restart: unless-stopped
+    networks:
+      - statex-email-network
+
+  # Email Web Interface (Roundcube)
+  email-web:
+    image: roundcube/roundcubemail:latest
+    container_name: statex-email-web
+    ports:
+      - "8080:80"
+    environment:
+      - ROUNDCUBEMAIL_DB_TYPE=sqlite
+      - ROUNDCUBEMAIL_DB_NAME=roundcube
+      - ROUNDCUBEMAIL_DEFAULT_HOST=email-server
+      - ROUNDCUBEMAIL_DEFAULT_PORT=143
+      - ROUNDCUBEMAIL_SMTP_SERVER=email-server
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+    volumes:
+      - ./email-web-data:/var/www/html
+    depends_on:
+      - email-server
+    restart: unless-stopped
+    networks:
+      - statex-email-network
+
+  # Email Forwarding Service
+  email-forwarder:
+    build: ./email-forwarder
+    container_name: statex-email-forwarder
+    environment:
+      - FORWARD_TO=ssfskype@gmail.com
+      - SMTP_SERVER=email-server
+      - SMTP_PORT=587
+    volumes:
+      - ./email-data:/var/mail
+    depends_on:
+      - email-server
+    restart: unless-stopped
+    networks:
+      - statex-email-network
+
+  # Notification Service (Updated)
+  notification-service:
+    build: .
+    ports:
+      - "8005:8005"
+    environment:
+      - SMTP_SERVER=email-server
+      - SMTP_PORT=587
+      - SMTP_USERNAME=contact@statex.cz
+      - SMTP_PASSWORD=contact123
+      - SENDER_EMAIL=contact@statex.cz
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - LINKEDIN_ACCESS_TOKEN=${LINKEDIN_ACCESS_TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - email-server
+    restart: unless-stopped
+    networks:
+      - statex-email-network
+
+networks:
+  statex-email-network:
+    driver: bridge
