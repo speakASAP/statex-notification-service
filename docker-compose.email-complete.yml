@@ -25,7 +25,7 @@ services:
       - ./email-aliases:/etc/aliases
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
   # Email Web Interface (Roundcube)
   email-web:
@@ -46,7 +46,7 @@ services:
       - email-server
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
   # Email Forwarding Service
   email-forwarder:
@@ -62,7 +62,7 @@ services:
       - email-server
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
   # Notification Service (Updated)
   notification-service:
@@ -85,8 +85,9 @@ services:
       - email-server
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
 networks:
-  statex-email-network:
+  statex_network:
+    external: true
     driver: bridge

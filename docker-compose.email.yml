@@ -24,7 +24,7 @@ services:
       - ./email-ssl:/etc/ssl/certs
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
   # Email Web Interface (Roundcube)
   email-web:
@@ -45,7 +45,7 @@ services:
       - email-server
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
   # Notification Service (Updated)
   notification-service:
@@ -68,8 +68,9 @@ services:
       - email-server
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
 networks:
-  statex-email-network:
+  statex_network:
+    external: true
     driver: bridge

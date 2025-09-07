@@ -7,7 +7,7 @@ services:
       - "1025:1025"  # SMTP
       - "8025:8025"  # Web UI
     networks:
-      - statex-email-network
+      - statex_network
 
   # Notification Service (Updated for MailHog)
   notification-service:
@@ -30,8 +30,9 @@ services:
       - mailhog
     restart: unless-stopped
     networks:
-      - statex-email-network
+      - statex_network
 
 networks:
-  statex-email-network:
+  statex_network:
+    external: true
     driver: bridge
