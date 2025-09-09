@@ -27,7 +27,7 @@ import aiohttp
 
 # Configuration
 NOTIFICATION_SERVICE_URL = "http://localhost:8005"
-AI_ORCHESTRATOR_URL = "http://localhost:8003"
+AI_ORCHESTRATOR_URL = "http://localhost:8010"
 NLP_SERVICE_URL = "http://localhost:8011"
 
 # Default test data
