@@ -45,7 +45,7 @@ These services are managed and orchestrated by the main platform:
 - **Logging Service** (8007) - Centralized logging
 
 #### Frontend & Gateway
-- **Website Frontend** (3001) - Next.js application
+- **Website Frontend** (3000) - Next.js application
 - **API Gateway** (80, 443) - Nginx reverse proxy
 
 #### Monitoring

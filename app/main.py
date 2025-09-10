@@ -4,6 +4,7 @@ StateX Notification Service
 Handles real notifications via email, WhatsApp, Telegram, and LinkedIn.
 """
 
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -33,14 +34,13 @@ app.add_middleware(
     allow_origins=[
         "https://statex.cz", 
         "https://www.statex.cz", 
-        "http://localhost:3000",
-        "http://localhost:3001",
+        os.getenv("CORS_ORIGIN", "http://localhost:3000"),
         "http://localhost:3002",
-        "https://localhost:3001",
+        f"https://localhost:{os.getenv('FRONTEND_PORT', '3000')}",
         "https://localhost:3002",
-        "http://127.0.0.1:3001",
+        f"http://127.0.0.1:{os.getenv('FRONTEND_PORT', '3000')}",
         "http://127.0.0.1:3002",
-        "https://127.0.0.1:3001",
+        f"https://127.0.0.1:{os.getenv('FRONTEND_PORT', '3000')}",
         "https://127.0.0.1:3002"
     ],
     allow_credentials=True,
