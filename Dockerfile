@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+# Create non-root user first
+RUN useradd -m -u 1000 appuser
+
 # Set working directory
 WORKDIR /app
 
@@ -10,14 +13,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY --chown=appuser:appuser requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy application code with correct ownership
+COPY --chown=appuser:appuser . .
 
-# Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+# Switch to non-root user
 USER appuser
 
 # Expose port
