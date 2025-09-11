@@ -1,0 +1,57 @@
+services:
+  # Notification Service - Multi-channel communication hub
+  notification-service:
+    image: python:3.11-slim
+    container_name: statex_notification_dev
+    volumes:
+      - .:/app
+      - ~/.cache/pip:/root/.cache/pip
+    working_dir: /app
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8005
+    ports:
+      - "8005:8005"
+    environment:
+      # Email Configuration
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_USE_TLS=${SMTP_USE_TLS:-true}
+      - FROM_EMAIL=${FROM_EMAIL:-contact@statex.cz}
+      
+      # Telegram Configuration
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+      
+      # WhatsApp Configuration
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN}
+      
+      # Database and Cache
+      - DATABASE_URL=postgresql://statex:statex_password@host.docker.internal:5432/statex
+      - REDIS_URL=redis://host.docker.internal:6379
+      - RABBITMQ_URL=amqp://statex:statex_password@host.docker.internal:5672
+      
+      # Service URLs
+      - AI_ORCHESTRATOR_URL=http://host.docker.internal:8010
+      - PLATFORM_URL=http://host.docker.internal:8000
+      - FRONTEND_URL=http://host.docker.internal:3000
+      
+      # Development Settings
+      - DEBUG=true
+      - LOG_LEVEL=debug
+      - ENVIRONMENT=development
+    networks:
+      - statex_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  statex_network:
+    external: true
