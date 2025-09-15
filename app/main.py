@@ -252,7 +252,7 @@ async def send_whatsapp_notification(notification: NotificationRequest) -> tuple
         return False, f"Failed to send WhatsApp message: {str(e)}"
 
 async def send_telegram_notification(notification: NotificationRequest) -> tuple[bool, str]:
-    """Send Telegram notification via Telegram Bot API"""
+    """Send Telegram notification via Telegram Bot API with inline keyboard buttons"""
     try:
         if not TELEGRAM_BOT_TOKEN:
             return False, "Telegram bot token not configured"
@@ -276,11 +276,46 @@ We'll contact you via Telegram for updates on your prototype.
 Best regards,
 The Statex Team"""
         
+        # Check if this is a prototype completion notification and add buttons
         data = {
             "chat_id": chat_id,
             "text": message,
             "parse_mode": "Markdown"
         }
+        
+        # Add inline keyboard buttons for prototype completion notifications
+        if notification.type == "prototype_ready" and "prototype" in notification.message.lower():
+            # Extract prototype ID from the message or use a default pattern
+            prototype_id = "proto_1757889419"  # Default prototype ID
+            results_url = f"http://project_{prototype_id.replace('proto_', '')}.localhost:3000/"
+            dashboard_url = "http://localhost:3000/dashboard"
+            new_prototype_url = "http://localhost:3000/contact"
+            
+            # Create inline keyboard with buttons
+            inline_keyboard = {
+                "inline_keyboard": [
+                    [
+                        {
+                            "text": "📊 View Your Dashboard",
+                            "url": dashboard_url
+                        }
+                    ],
+                    [
+                        {
+                            "text": "🤖 AI Analysis Results", 
+                            "url": results_url
+                        }
+                    ],
+                    [
+                        {
+                            "text": "🚀 Request New Prototype",
+                            "url": new_prototype_url
+                        }
+                    ]
+                ]
+            }
+            
+            data["reply_markup"] = inline_keyboard
         
         response = requests.post(url, json=data)
         
